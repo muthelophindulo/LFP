@@ -8,6 +8,7 @@ public class LfpApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(LfpApplication.class, args);
+
 	}
 
 }
