@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Order</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit measurement</h4>
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/measurements/update}" th:object="${Measurements}" method="post">
+
+                        <!-- Hidden ID -->
+                        <input type="hidden" th:field="*{id}"/>
+
+                        <h6 class="text-uppercase text-muted fw-semibold mb-3">Upper Body</h6>
+
+                        <div class="col-md-6 mb-4">
+                            <div class="mb-3">
+                                <label class="form-label">Bust</label>
+                                <input type="number" th:field="*{bust}" class="form-control">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">shoulder</label>
+                                <input type="number" th:field="*{shoulder}" class="form-control">
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">sleeve</label>
+                                <input type="number" th:field="*{sleeves}" class="form-control" >
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">length</label>
+                                <input type="number" th:field="*{topLength}" class="form-control" >
+                            </div>
+                        </div>
+
+                        <h6 class="text-uppercase text-muted fw-semibold mb-3">Lower Body</h6>
+
+                        <div class="col-md-6 mb-4">
+                            <div class="mb-3">
+                                <label class="form-label">Hips</label>
+                                <input type="number" th:field="*{hips}" class="form-control" >
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">thigh</label>
+                                <input type="number" th:field="*{thigh}" class="form-control" >
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">waist</label>
+                                <input type="number" th:field="*{bottomWaist}" class="form-control" >
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Length</label>
+                                <input type="number" th:field="*{bottomLength}" class="form-control" >
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">inseam</label>
+                                <input type="number" th:field="*{inseam}" class="form-control" >
+                            </div>
+
+                        </div>
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/measurements/list}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-success">Update measurement</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

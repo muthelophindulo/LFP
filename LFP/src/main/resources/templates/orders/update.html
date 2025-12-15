@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Order</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit Order</h4>
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/orders/update}" th:object="${order}" method="post">
+
+                        <!-- Hidden ID -->
+                        <input type="hidden" th:field="*{id}"/>
+
+                        <!-- Product Name -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Product</label>
+                            <select class="form-select" th:field="*{productName}">
+                                <option value="">-- Select a product --</option>
+                                <option th:each="product : ${products}"
+                                        th:value="${product.name}"
+                                        th:text="${product.name}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Quantity -->
+                        <div class="mb-3">
+                            <label class="form-label">Quantity</label>
+                            <input type="number" th:field="*{quantity}" class="form-control" min="1" required>
+                        </div>
+
+                        <!-- Ordered By -->
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">customer</label>
+                            <select class="form-select" th:field="*{orderedBy}">
+                                <option value="">-- Select a customer --</option>
+                                <option th:each="customer : ${customers}"
+                                        th:value="${customer.name}"
+                                        th:text="${customer.name}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/orders}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-success">Update Order</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

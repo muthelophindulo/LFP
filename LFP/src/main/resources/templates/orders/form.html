@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">Create Order</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .order-form-container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,.1);
+        }
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .form-section h4 {
+            color: #495057;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .required::after {
+            content: " *";
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation (same as dashboard) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">LFP System</a>
+        <div class="navbar-nav ms-auto">
+            <span class="navbar-text text-white me-3">
+                <i class="bi bi-person-circle"></i>
+                User
+            </span>
+            <form th:action="@{/logout}" method="post" class="d-inline">
+                <button class="btn btn-outline-light btn-sm" type="submit">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="order-form-container">
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show">
+            <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show">
+            <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <h2 class="mb-4">
+            <i class="bi bi-cart-plus"></i>
+            <span th:text="${pageTitle}">Create Order</span>
+        </h2>
+
+        <form th:action="${action == 'Create' ? '/orders/save' : '/orders/update/' + order.id}"
+              th:object="${order}" method="post">
+
+
+
+            <!-- Order Details Section -->
+            <div class="form-section">
+                <h4><i class="bi bi-box-seam"></i> Order Details</h4>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label" th:unless="${action == 'Update'}">
+                            Order Number <small class="text-muted">(Leave blank to auto-generate)</small>
+                        </label>
+                        <label class="form-label" th:if="${action == 'Update'}">Order Number</label>
+                        <input type="text" class="form-control" th:field="*{orderNo}"
+                               th:readonly="${action == 'Update'}"
+                               placeholder="ORD-001 or leave blank for auto-generation">
+                        <div class="text-danger" th:if="${#fields.hasErrors('orderNo')}"
+                             th:errors="*{orderNo}"></div>
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label required">Product</label>
+                    <select class="form-select" th:field="*{productName}">
+                        <option value="">-- Select a product --</option>
+                        <option th:each="product : ${products}"
+                                th:value="${product.name}"
+                                th:text="${product.name}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label required">customer</label>
+                    <select class="form-select" th:field="*{orderedBy}">
+                        <option value="">-- Select a customer --</option>
+                        <option th:each="customer : ${customers}"
+                                th:value="${customer.name}"
+                                th:text="${customer.name}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label required">Quantity</label>
+                        <input type="number" class="form-control" th:field="*{quantity}"
+                               min="1" value="1">
+                        <div class="text-danger" th:if="${#fields.hasErrors('quantity')}"
+                             th:errors="*{quantity}"></div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- Form Actions -->
+            <div class="d-flex justify-content-between mt-4">
+                <a th:href="@{/dashboard}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to dasboard
+                </a>
+                <div>
+                    <button type="reset" class="btn btn-outline-secondary me-2">
+                        <i class="bi bi-eraser"></i> Reset
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle"></i>
+                        <span th:text="${action}">Create</span> Order
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript for calculations -->
+<script th:inline="javascript">
+    // Auto-calculate total amount based on product price and quantity
+    document.addEventListener('DOMContentLoaded', function() {
+        const productSelect = document.querySelector('[th\\:field="*{product}"]');
+        const quantityInput = document.querySelector('[th\\:field="*{quantity}"]');
+        const totalAmountInput = document.querySelector('[th\\:field="*{totalAmount}"]');
+
+        // Product prices mapping (you would need to get this from server)
+        const productPrices = {
+            /* This would be populated with actual product data */
+        };
+
+        function calculateTotal() {
+            if (productSelect.value && quantityInput.value) {
+                const quantity = parseInt(quantityInput.value);
+                // In real app, you'd fetch price from server based on selected product
+                // For now, we'll just multiply quantity by 100 as example
+                const price = 100; // Default price
+                const total = quantity * price;
+                totalAmountInput.value = total.toFixed(2);
+            }
+        }
+
+        productSelect.addEventListener('change', calculateTotal);
+        quantityInput.addEventListener('input', calculateTotal);
+
+        // Set today's date as default
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.querySelector('[th\\:field="*{date}"]');
+        if (dateInput && !dateInput.value) {
+            dateInput.value = today;
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

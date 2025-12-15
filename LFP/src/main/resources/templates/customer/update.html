@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Order</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Edit customer</h4>
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/customer/update}" th:object="${customer}" method="post">
+
+                        <!-- Hidden ID -->
+                        <input type="hidden" th:field="*{id}"/>
+
+                        <!-- name -->
+                        <div class="mb-3">
+                            <label class="form-label">Customer Name</label>
+                            <input type="text" th:field="*{name}" class="form-control"  required>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-between">
+                            <a th:href="@{/customers/list}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-success">Update customer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
