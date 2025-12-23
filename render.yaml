@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: lfp-app
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: TIDB_PASSWORD
+        value: qxHwpjPTvxzSXEW9
+      - key: ADMIN_PASSWORD
+        value: admin123
+    healthCheckPath: /
+    autoDeploy: true
