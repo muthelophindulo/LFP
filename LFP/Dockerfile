@@ -1,47 +1,46 @@
-# ===============================
-# Stage 1: Build (Optimized)
-# ===============================
-FROM maven:3.9.9-eclipse-temurin-25 AS build
+# ============================================
+# BUILD STAGE
+# ============================================
+# Use Ubuntu-based image for Java 25 (Alpine might not have Java 25 yet)
+FROM maven:3.9.6-eclipse-temurin-25 AS builder
 
 WORKDIR /app
-
-# 1. Copy only pom.xml first (better layer caching)
 COPY pom.xml .
-
-# 2. Download dependencies with retry for network resilience
-RUN mvn dependency:go-offline -B || \
-    (echo "Retrying with simpler resolve..." && mvn dependency:resolve -B)
-
-# 3. Copy source code
+RUN mvn dependency:go-offline || mvn dependency:resolve
 COPY src ./src
+RUN mvn clean package -DskipTests
 
-# 4. Build application with production settings
-RUN mvn clean package -DskipTests \
-    -Dmaven.test.skip=true \
-    -Dmaven.javadoc.skip=true
+# ============================================
+# RUNTIME STAGE
+# ============================================
+# Use Ubuntu/Debian base for Java 25 availability
+FROM eclipse-temurin:25-jre
 
-
-# ===============================
-# Stage 2: Runtime (Optimized)
-# ===============================
-FROM eclipse-temurin:25-jre-jammy
-
-# Create non-root user for security
-RUN groupadd -r spring && useradd -r -g spring spring
+# Install SSL certificates (different command for Debian/Ubuntu)
+RUN apt-get update && apt-get install -y ca-certificates openssl && \
+    update-ca-certificates && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy jar from build stage
-COPY --from=build --chown=spring:spring /app/target/*.jar app.jar
-
-# Switch to non-root user
+# Create non-root user (different commands for Debian/Ubuntu)
+RUN groupadd -r spring && useradd -r -g spring spring
 USER spring:spring
 
-# Expose your application port (8081 as in your original)
+# Copy JAR
+COPY --from=builder /app/target/LFP-*.jar app.jar
+
+# Environment variables
+ENV SPRING_PROFILES_ACTIVE=prod
+
+# SSL fix for TiDB (truststore path is different on Ubuntu)
+ENV JAVA_OPTS="-Djavax.net.ssl.trustStore=/etc/ssl/certs/java/cacerts \
+               -Djavax.net.ssl.trustStorePassword=changeit"
+
 EXPOSE 8081
 
-# Add JVM options for better container performance
-ENV JAVA_OPTS=""
+# Health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8081/ || exit 1
 
-# Use shell form to allow JAVA_OPTS
-ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

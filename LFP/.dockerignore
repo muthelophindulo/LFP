@@ -1,8 +1,32 @@
-target
-.idea
-.git
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Build files
+target/
+bin/
+build/
+out/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
 .gitignore
-.mvn
-mvnw
-mvnw.cmd
+
+# Temp files
+*.tmp
+*.temp
+
+# Documentation
+*.md
 HELP.md
