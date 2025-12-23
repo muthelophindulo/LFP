@@ -2,7 +2,8 @@
   "builds": [
     {
       "src": "Dockerfile",
-      "use": "@vercel/docker"
+      "use": "@vercel/docker",
+      "config": { "zeroConfig": false }
     }
   ],
   "routes": [
