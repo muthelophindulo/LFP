@@ -2,6 +2,7 @@ package com.LFP.controller;
 
 import com.LFP.service.MeasurementService;
 import com.LFP.service.ProductService;
+import com.LFP.service.todoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +14,12 @@ public class WebController {
     private final OrderService orderService;
     private final ProductService productService;
     private final MeasurementService measurementService;
-    public WebController(OrderService orderService, ProductService productService, MeasurementService measurementService) {
+    private final todoService todoService;
+    public WebController(OrderService orderService, ProductService productService, MeasurementService measurementService, todoService todoService) {
         this.orderService = orderService;
         this.productService = productService;
         this.measurementService = measurementService;
+        this.todoService = todoService;
     }
 
     @GetMapping("/login")
@@ -35,6 +38,7 @@ public class WebController {
         model.addAttribute("revenue",productService.revenue());
         model.addAttribute("productCount",productService.getProducts().size());
         model.addAttribute("measurementCount",measurementService.getMeasurements().size());
+        model.addAttribute("todoCount",todoService.getTodos().size());
         return "dashboard";
     }
 
