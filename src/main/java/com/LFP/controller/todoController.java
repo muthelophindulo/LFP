@@ -77,8 +77,12 @@ public class todoController {
     public String saveUpdate(
             @ModelAttribute Todo Todo
     ){
-        Todo.setTodoId( todoService.GetByTodoId(Todo.getTodoId()).getTodoId() );
-        todoService.saveTodo(Todo);
+        Todo x = todoService.getById( Todo.getId() );
+
+        x.setTodoId( todoService.getById( x.getId() ).getTodoId() ) ;
+        x.setName( Todo.getName());
+        x.setDescription( Todo.getDescription());
+        todoService.saveTodo(x);
         return "redirect:/todo/list";
     }
 
