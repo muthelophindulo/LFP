@@ -31,6 +31,6 @@ public class todoService {
     }
 
     public Todo GetByTodoId(String id){
-        return todoRepository.getById(id);
+        return todoRepository.getByTodoId(id);
     }
 }
