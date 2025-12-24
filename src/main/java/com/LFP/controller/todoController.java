@@ -83,6 +83,7 @@ public class todoController {
         x.setName( Todo.getName());
         x.setDescription( Todo.getDescription());
         todoService.saveTodo(x);
+
         return "redirect:/todo/list";
     }
 
